@@ -1,4 +1,5 @@
-﻿Console.WriteLine("Welcome to my contacts list");
+﻿using System.Net.Mail;
+Console.WriteLine("Welcome to my contacts list");
 byte Choice;
 bool executing = true;
 List<int> ids = new List<int>();
@@ -125,13 +126,40 @@ static void AddContact(List<int> ids, Dictionary<int, string> names, Dictionary<
     }
 
     Console.Write("Email: ");
-    string email = Console.ReadLine();
+    string email;
+    while (true)
+    {
+        email = Console.ReadLine();
+        try
+        {
+            var tempEmail2 = new MailAddress(email);
+            email = tempEmail2.Address;
+            break;
+        }
+        catch (FormatException)
+        {
+            Console.Write("Invalid email format. Please try again: ");
+            continue;
+        }
+    }
 
     Console.Write("Age: ");
     int age;
-    while (!int.TryParse(Console.ReadLine(), out age))
+    while (true)
     {
-        Console.Write("Invalid age. Try again: ");
+        if (!int.TryParse(Console.ReadLine(), out age))
+        {
+            Console.Write("Invalid age. Try again: ");
+            continue;
+        }
+
+        if (age < 1)
+        {
+            Console.Write("They're not even born yet. Try again: ");
+            continue;
+        }
+
+        break;
     }
 
     Console.Write("Best friend? (1=Yes, 2=No): ");
@@ -337,16 +365,43 @@ static void ModifyContact(List<int> ids, Dictionary<int, string> names, Dictiona
             break;
         case "5":
             Console.Write("New email: ");
-            emails[id] = Console.ReadLine();
+            string newEmail;
+            while (true)
+            {
+                newEmail = Console.ReadLine();
+                try
+                {
+                    var tempEmail2 = new MailAddress(newEmail);
+                    emails[id] = tempEmail2.Address;
+                    break;
+                }
+                catch (FormatException)
+                {
+                    Console.Write("Invalid email format. Please try again: ");
+                    continue;
+                }
+            }
             break;
         case "6":
             Console.Write("New age: ");
             int newAge;
-            while (!int.TryParse(Console.ReadLine(), out newAge))
+            while (true)
             {
-                Console.Write("Invalid age. Try again: ");
+                if (!int.TryParse(Console.ReadLine(), out newAge))
+                {
+                    Console.Write("Invalid age. Try again: ");
+                    continue;
+                }
+
+                if (newAge < 1)
+                {
+                    Console.Write("They're not even born yet. Try again: ");
+                    continue;
+                }
+
+                ages[id] = newAge;
+                break;
             }
-            ages[id] = newAge;
             break;
         case "7":
             Console.Write("Best friend? (1=Yes, 2=No): ");
