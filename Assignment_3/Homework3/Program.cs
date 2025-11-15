@@ -1,4 +1,5 @@
 ﻿using System.Net.Mail;
+
 Console.WriteLine("Welcome to my contacts list");
 byte Choice;
 bool executing = true;
@@ -51,7 +52,6 @@ while (executing)
         case 3:
             Console.Clear();
             SearchContact(ids, names, lastnames, addresses, phones, emails, ages, bestFriends);
-            WaitForContinue();
             break;
         case 4:
             Console.Clear();
@@ -68,7 +68,7 @@ while (executing)
             Console.WriteLine("Goodbye!");
             break;
         default:
-            Console.WriteLine("Invalid option!");
+            Console.WriteLine("Are you stupid or something!");
             WaitForContinue();
             break;
     }
@@ -101,7 +101,7 @@ static void AddContact(List<int> ids, Dictionary<int, string> names, Dictionary<
         phone = Console.ReadLine();
         if (string.IsNullOrWhiteSpace(phone))
         {
-            Console.Write("Phone cannot be empty. Try again: ");
+            Console.Write("Phone number is required. Try again: ");
             continue;
         }
 
@@ -121,7 +121,7 @@ static void AddContact(List<int> ids, Dictionary<int, string> names, Dictionary<
         }
         else
         {
-            Console.Write("Phone can only contain numbers and +,-,(,). Try again: ");
+            Console.Write("Invalid phone format. Only numbers and + - ( ) space are allowed. Try again: ");
         }
     }
 
@@ -130,6 +130,13 @@ static void AddContact(List<int> ids, Dictionary<int, string> names, Dictionary<
     while (true)
     {
         email = Console.ReadLine();
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            Console.Write("Email is required. Try again: ");
+            continue;
+        }
+
         try
         {
             var tempEmail2 = new MailAddress(email);
@@ -204,71 +211,81 @@ static void ShowContacts(List<int> ids, Dictionary<int, string> names, Dictionar
 
 static void SearchContact(List<int> ids, Dictionary<int, string> names, Dictionary<int, string> lastnames, Dictionary<int, string> addresses, Dictionary<int, string> phones, Dictionary<int, string> emails, Dictionary<int, int> ages, Dictionary<int, bool> bestFriends)
 {
-    Console.WriteLine("SEARCH CONTACT");
-    Console.WriteLine("--------------");
+    bool keepSearching = true;
 
-    string option;
-    while (true)
+    while (keepSearching)
     {
-        Console.WriteLine("Search by:");
-        Console.WriteLine("1. Name");
-        Console.WriteLine("2. Phone");
-        Console.WriteLine("3. Email");
-        Console.Write("Choose: ");
-        option = Console.ReadLine();
+        Console.Clear();
+        Console.WriteLine("SEARCH CONTACT");
+        Console.WriteLine("--------------");
 
-        if (option == "1" || option == "2" || option == "3")
-            break;
-        Console.WriteLine("Invalid option. Try again.\n");
-    }
-
-    bool found = false;
-
-    if (option == "1")
-    {
-        Console.Write("Enter name to search: ");
-        string searchName = Console.ReadLine();
-
-        foreach (var id in ids)
+        string option;
+        while (true)
         {
-            if (names[id].ToLower().Contains(searchName.ToLower()))
+            Console.WriteLine("Search by:");
+            Console.WriteLine("1. Name");
+            Console.WriteLine("2. Phone");
+            Console.WriteLine("3. Email");
+            Console.Write("Choose: ");
+            option = Console.ReadLine();
+
+            if (option == "1" || option == "2" || option == "3")
+                break;
+            Console.WriteLine("Invalid option. Try again.\n");
+        }
+
+        bool found = false;
+
+        if (option == "1")
+        {
+            Console.Write("Enter name to search: ");
+            string searchName = Console.ReadLine();
+
+            foreach (var id in ids)
             {
-                ShowContactDetails(id, names, lastnames, addresses, phones, emails, ages, bestFriends);
-                found = true;
+                if (names[id].ToLower().Contains(searchName.ToLower()))
+                {
+                    ShowContactDetails(id, names, lastnames, addresses, phones, emails, ages, bestFriends);
+                    found = true;
+                }
             }
         }
-    }
-    else if (option == "2")
-    {
-        Console.Write("Enter phone to search: ");
-        string searchPhone = Console.ReadLine();
-
-        foreach (var id in ids)
+        else if (option == "2")
         {
-            if (phones[id].Contains(searchPhone))
+            Console.Write("Enter phone to search: ");
+            string searchPhone = Console.ReadLine();
+
+            foreach (var id in ids)
             {
-                ShowContactDetails(id, names, lastnames, addresses, phones, emails, ages, bestFriends);
-                found = true;
+                if (phones[id].Contains(searchPhone))
+                {
+                    ShowContactDetails(id, names, lastnames, addresses, phones, emails, ages, bestFriends);
+                    found = true;
+                }
             }
         }
-    }
-    else if (option == "3")
-    {
-        Console.Write("Enter email to search: ");
-        string searchEmail = Console.ReadLine();
-
-        foreach (var id in ids)
+        else if (option == "3")
         {
-            if (emails[id].ToLower().Contains(searchEmail.ToLower()))
+            Console.Write("Enter email to search: ");
+            string searchEmail = Console.ReadLine();
+
+            foreach (var id in ids)
             {
-                ShowContactDetails(id, names, lastnames, addresses, phones, emails, ages, bestFriends);
-                found = true;
+                if (emails[id].ToLower().Contains(searchEmail.ToLower()))
+                {
+                    ShowContactDetails(id, names, lastnames, addresses, phones, emails, ages, bestFriends);
+                    found = true;
+                }
             }
         }
-    }
 
-    if (!found)
-        Console.WriteLine("No contacts found.");
+        if (!found)
+            Console.WriteLine("No contacts found.");
+
+        Console.Write("\nDo you want to make another search? (1=Yes, 2=No): ");
+        string continueChoice = Console.ReadLine();
+        keepSearching = continueChoice == "1";
+    }
 }
 
 static void ShowContactDetails(int id, Dictionary<int, string> names, Dictionary<int, string> lastnames, Dictionary<int, string> addresses, Dictionary<int, string> phones, Dictionary<int, string> emails, Dictionary<int, int> ages, Dictionary<int, bool> bestFriends)
@@ -338,7 +355,7 @@ static void ModifyContact(List<int> ids, Dictionary<int, string> names, Dictiona
                 newPhone = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(newPhone))
                 {
-                    Console.Write("Phone cannot be empty: ");
+                    Console.Write("Phone number is required. Try again: ");
                     continue;
                 }
 
@@ -359,7 +376,7 @@ static void ModifyContact(List<int> ids, Dictionary<int, string> names, Dictiona
                 }
                 else
                 {
-                    Console.Write("Invalid phone. Try again: ");
+                    Console.Write("Invalid phone format. Only numbers and + - ( ) space are allowed. Try again: ");
                 }
             }
             break;
@@ -369,6 +386,13 @@ static void ModifyContact(List<int> ids, Dictionary<int, string> names, Dictiona
             while (true)
             {
                 newEmail = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(newEmail))
+                {
+                    Console.Write("Email is required. Try again: ");
+                    continue;
+                }
+
                 try
                 {
                     var tempEmail2 = new MailAddress(newEmail);
